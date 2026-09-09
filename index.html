@@ -1,1 +1,640 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>BuildWithBNZ Crew</title></head><body><p>Crew desk file is in artifacts. Replace this page with the full index.html from the Grok session.</p><p>Repo: https://github.com/bnzbuilders/buildwithbnz-crew</p></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BuildWithBNZ Crew</title>
+  <meta name="description" content="Grok-style construction crew desk. Sara, Taylor, Emma. Draft until APPROVE." />
+  <meta name="theme-color" content="#0B0D10" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --surface: #12151a;
+      --card: #161a21;
+      --hover: #1c2129;
+      --fg: #e8eaed;
+      --muted: #9aa0a6;
+      --dim: #6b7280;
+      --border: #252b35;
+      --line: #1e242e;
+      --accent: #e89b3c;
+      --gold: #c9a227;
+      --accent-soft: rgba(232, 155, 60, 0.14);
+      --sara: #7c9cff;
+      --taylor: #4dd0c8;
+      --emma: #f0a0c0;
+      --ok: #81c784;
+      --warn: #ffb74d;
+      --danger: #e57373;
+      --ink: #0b0d10;
+      --font: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+      --r: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: var(--bg); color: var(--fg); font-family: var(--font); -webkit-font-smoothing: antialiased; }
+    button, input, textarea { font: inherit; color: inherit; }
+    button:not(:disabled), [role="button"]:not(:disabled) { cursor: pointer; }
+    button:disabled { opacity: 0.4; cursor: default; }
+    .app { display: flex; flex-direction: column; height: 100dvh; }
+    header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--surface);
+    }
+    .mark {
+      width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--accent), var(--gold));
+      color: var(--ink); font-size: 11px; font-weight: 700; letter-spacing: -0.02em;
+    }
+    h1 { font-size: 14px; font-weight: 600; letter-spacing: -0.02em; }
+    .sub { font-size: 11px; color: var(--muted); }
+    .v2 { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-left: 8px; }
+    .icon-btn {
+      width: 44px; height: 44px; border-radius: var(--r);
+      border: 1px solid var(--border); background: var(--card); color: var(--muted);
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .icon-btn:hover { color: var(--fg); }
+    .ghost {
+      height: 44px; padding: 0 12px; border-radius: var(--r);
+      border: 1px solid var(--border); background: var(--card); color: var(--muted); font-size: 12px; font-weight: 500;
+    }
+    .layout { display: flex; flex: 1; min-height: 0; }
+    aside {
+      width: 288px; flex-shrink: 0; border-right: 1px solid var(--border);
+      background: var(--surface); display: flex; flex-direction: column; min-height: 0;
+    }
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .seats { display: flex; gap: 4px; padding: 8px 12px; border-bottom: 1px solid var(--border); overflow-x: auto; }
+    .seat {
+      display: flex; align-items: center; gap: 8px; height: 44px; min-width: 96px;
+      padding: 0 12px; border: 0; background: transparent; color: var(--muted); border-radius: var(--r); text-align: left;
+    }
+    .seat.on.sara { background: rgba(124,156,255,.14); color: var(--sara); }
+    .seat.on.taylor { background: rgba(77,208,200,.14); color: var(--taylor); }
+    .seat.on.emma { background: rgba(240,160,192,.14); color: var(--emma); }
+    .av { width: 24px; height: 24px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--ink); }
+    .av.sara { background: var(--sara); }
+    .av.taylor { background: var(--taylor); }
+    .av.emma { background: var(--emma); }
+    .seat small { display: block; font-size: 10px; opacity: .8; font-weight: 400; }
+    .seat strong { display: block; font-size: 12px; }
+    .ctx { padding: 8px 16px; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--dim); }
+    .ctx b { color: var(--muted); font-weight: 600; }
+    .unk { font-family: var(--mono); color: var(--warn); }
+    .log { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+    .row { display: flex; }
+    .row.user { justify-content: flex-end; }
+    .bubble {
+      max-width: min(100%, 40rem); border-radius: 12px; padding: 10px 12px; border: 1px solid var(--border);
+      background: var(--card); font-size: 13px; line-height: 1.5; white-space: pre-wrap;
+    }
+    .row.user .bubble { background: var(--accent-soft); border-color: rgba(232,155,60,.3); border-bottom-right-radius: 4px; }
+    .row.crew .bubble { border-bottom-left-radius: 4px; }
+    .who { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .who span { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+    .who .sara { color: var(--sara); } .who .taylor { color: var(--taylor); } .who .emma { color: var(--emma); } .who .you { color: var(--accent); }
+    .chip {
+      font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 999px;
+    }
+    .chip.DRAFT { background: var(--accent-soft); color: var(--accent); }
+    .chip.APPROVED { background: rgba(129,199,132,.18); color: var(--ok); }
+    .chip.SENT-DRAFT { background: rgba(255,183,77,.18); color: var(--warn); }
+    .copy {
+      width: 32px; height: 32px; border: 0; background: transparent; color: var(--dim); border-radius: 6px;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .copy:hover { background: var(--hover); color: var(--fg); }
+    .composer { border-top: 1px solid var(--border); background: var(--surface); padding: 12px 16px; }
+    .files { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+    .filechip {
+      display: flex; align-items: center; gap: 6px; font-size: 11px;
+      border: 1px solid var(--border); background: var(--card); border-radius: var(--r); padding: 4px 8px;
+    }
+    .filechip button { border: 0; background: none; color: var(--dim); }
+    .compose-row { display: flex; gap: 8px; align-items: flex-end; }
+    textarea {
+      flex: 1; min-height: 44px; resize: none; border: 1px solid var(--border); background: var(--bg);
+      border-radius: var(--r); padding: 10px 12px; outline: none;
+    }
+    textarea:focus { border-color: var(--accent); }
+    .ask {
+      height: 44px; padding: 0 14px; border: 0; border-radius: var(--r);
+      background: var(--accent); color: var(--ink); font-weight: 600; font-size: 14px;
+    }
+    .hint { margin-top: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+    .sec { font-family: var(--mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); padding: 14px 12px 8px; }
+    .job {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      height: 44px; padding: 0 10px; border: 0; border-radius: var(--r); background: transparent; color: var(--fg); text-align: left;
+    }
+    .job.on { background: var(--accent-soft); color: var(--accent); }
+    .job:hover { background: var(--hover); }
+    .lock { font-size: 11px; opacity: .7; }
+    .field { padding: 0 12px 10px; }
+    .field label { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
+    .field input {
+      margin-top: 6px; width: 100%; height: 44px; border: 1px solid var(--border); background: var(--bg);
+      border-radius: var(--r); padding: 0 10px; outline: none;
+    }
+    .field input:focus { border-color: var(--accent); }
+    .flags { list-style: none; padding: 0 12px; display: flex; flex-direction: column; gap: 8px; }
+    .flags li {
+      display: flex; justify-content: space-between; align-items: center;
+      border: 1px solid var(--line); background: var(--bg); border-radius: var(--r); padding: 8px 10px; font-size: 13px;
+    }
+    .flag { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; min-width: 64px; text-align: center; }
+    .flag.in { background: rgba(129,199,132,.18); color: var(--ok); }
+    .flag.missing { background: rgba(229,115,115,.18); color: var(--danger); }
+    .muted { font-size: 12px; color: var(--dim); padding: 12px; }
+    .filed { padding: 8px 12px 16px; font-size: 12px; color: var(--muted); }
+    .filed li { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; }
+    .k { font-family: var(--mono); font-size: 10px; text-transform: uppercase; color: var(--dim); }
+    .panel {
+      position: absolute; right: 12px; top: 56px; z-index: 30; width: min(calc(100% - 24px), 22rem);
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.45);
+    }
+    .panel p { font-size: 12px; color: var(--muted); margin: 6px 0 10px; line-height: 1.5; }
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+      background: var(--card); border: 1px solid var(--border); border-radius: 999px;
+      padding: 8px 16px; font-size: 12px; font-weight: 500; z-index: 50;
+    }
+    .drawer { display: none; }
+    .mobile-only { display: none; }
+    @media (max-width: 980px) {
+      aside { display: none; }
+      .mobile-only { display: inline-flex; }
+      .drawer {
+        display: block; position: fixed; inset: 0; z-index: 40;
+      }
+      .drawer .scrim { position: absolute; inset: 0; background: rgba(11,13,16,.7); border: 0; }
+      .drawer .sheet {
+        position: absolute; inset: 0 auto 0 0; width: min(100%, 20rem);
+        background: var(--surface); display: flex; flex-direction: column;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <header>
+      <div class="mark">BNZ</div>
+      <div style="flex:1;min-width:0">
+        <h1>BuildWithBNZ Crew <span class="v2">v2</span></h1>
+        <div class="sub">Draft until APPROVE · SEND copies · never emails</div>
+      </div>
+      <button type="button" class="icon-btn" id="keyBtn" aria-label="API key" title="Key panel">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 6.2-6.2a2 2 0 0 1 2.8 2.8l-3.5 1.2-1.2 3.5"/></svg>
+      </button>
+      <button type="button" class="ghost mobile-only" id="packetBtn">Packet</button>
+    </header>
+    <div class="layout">
+      <aside id="aside"></aside>
+      <section class="main">
+        <div class="seats" id="seats"></div>
+        <div class="ctx" id="ctx"></div>
+        <div class="log" id="log"></div>
+        <div class="composer">
+          <div class="files" id="files"></div>
+          <div class="compose-row">
+            <input type="file" id="fileInput" accept=".pdf,image/png,image/jpeg,image/jpg,image/webp,image/heic,.png,.jpg,.jpeg,.webp" multiple hidden />
+            <button type="button" class="icon-btn" id="clip" aria-label="Attach PDF or photo" title="PDF or photo">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 1 1-2.82-2.83l8.49-8.48"/></svg>
+            </button>
+            <textarea id="box" rows="2" placeholder="Ask the seated crew. Type APPROVE or SEND. Attach a PDF or photo."></textarea>
+            <button type="button" class="ask" id="ask">Ask</button>
+          </div>
+          <div class="hint">Enter sends · Shift+Enter newline · SEND copies last draft</div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <div class="panel" id="keyPanel" hidden>
+    <strong>Key panel</strong>
+    <p>Office brain runs without a key. Paste an xAI key if you want this browser to try live Grok. CORS may block it; the desk still works.</p>
+    <input type="password" id="keyInput" placeholder="xai-…" style="width:100%;height:44px;border:1px solid var(--border);background:var(--bg);border-radius:8px;padding:0 10px;margin-bottom:10px" />
+    <button type="button" class="ask" id="keySave">Save</button>
+    <button type="button" class="ghost" id="keyClear">Clear</button>
+  </div>
+  <div class="drawer" id="drawer" hidden>
+    <button type="button" class="scrim" id="scrim" aria-label="Close packet"></button>
+    <div class="sheet" id="sheet"></div>
+  </div>
+  <div class="toast" id="toast" hidden></div>
+  <script>
+(function () {
+  var KEY = "bnz-crew-v2";
+  var XKEY = "bnz-crew-xai-key";
+  var SEATS = [
+    { id: "sara", name: "Sara", title: "COO", blurb: "Ops, bids, email, priorities. She drafts. You approve." },
+    { id: "taylor", name: "Taylor", title: "Estimator", blurb: "Plans, takeoff, labor, material. UNKNOWN stays UNKNOWN." },
+    { id: "emma", name: "Emma", title: "Coordinator", blurb: "Packet, W-9, COI, invoices, closeout. Draft until APPROVE." }
+  ];
+
+  function packet() { return { vendorName: "", w9: "missing", coi: "missing", po: "missing", waiver: "missing" }; }
+  function jobsSeed() {
+    return [
+      { id: "indian-trail", name: "Indian Trail", locked: true, kind: "Residential interiors", po: "UNKNOWN", packet: packet(), plans: [], docs: [] },
+      { id: "545-vienna", name: "545 Vienna", locked: true, kind: "Residential interiors", po: "UNKNOWN", packet: packet(), plans: [], docs: [] }
+    ];
+  }
+  function tkey(jobId, seat) { return jobId + "::" + seat; }
+  function intro(seat, job) {
+    var text = seat === "sara"
+      ? "Sara · COO desk. " + job.name + " is locked in the book. I will draft follow-ups and priorities. Nothing leaves this desk until you type APPROVE. Type SEND to copy the last draft — I do not email."
+      : seat === "taylor"
+        ? "Taylor · estimator. " + job.name + ". Bid total is None / UNKNOWN. I will not invent SF, wages, or prices. Drop a plan on the composer and I will log it as a drawing, not a number."
+        : "Emma · coordinator. " + job.name + " packet is on the left. W-9, COI, PO, and waiver start missing. Drop a PDF or photo and I will file it. Drafts stay drafts until APPROVE.";
+    return { id: seat + "-" + job.id + "-hello", role: "crew", seat: seat, text: text, at: Date.now() };
+  }
+  function emptyThreads() {
+    var th = {}, jobs = jobsSeed(), i, j;
+    for (i = 0; i < jobs.length; i++) {
+      for (j = 0; j < SEATS.length; j++) th[tkey(jobs[i].id, SEATS[j].id)] = [intro(SEATS[j].id, jobs[i])];
+    }
+    return th;
+  }
+  function uid(p) { return p + "-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 7); }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">").replace(/"/g,""");
+  }
+
+  function classify(file, seat) {
+    var n = (file.name || "").toLowerCase().replace(/[_\-.]+/g, " ");
+    if (seat === "taylor") return "plan";
+    if (/\bw-?9\b|form.?w.?9/.test(n)) return "w9";
+    if (/\bcoi\b|cert(ificate)?.{0,12}insur|insurance/.test(n)) return "coi";
+    if (/\bwaiver\b|\blien\b/.test(n)) return "waiver";
+    if (/\bpo\b|purchase.?order/.test(n)) return "po";
+    if (/\binvoice\b|\binv[._-]/.test(n)) return "invoice";
+    if (/\breceipt\b/.test(n)) return "receipt";
+    if (/\bplan\b|\bdrawing\b|\bspec\b|\btakeoff\b|\bblueprint\b/.test(n)) return "plan";
+    if ((file.type || "").indexOf("image/") === 0) return "receipt";
+    return "invoice";
+  }
+  function kindLabel(k) {
+    return ({ w9: "W-9", coi: "COI", po: "PO", waiver: "waiver", invoice: "invoice", receipt: "receipt", plan: "plan" })[k] || k;
+  }
+  function packetKey(k) { return (k === "w9" || k === "coi" || k === "po" || k === "waiver") ? k : null; }
+  function vendorFrom(name) {
+    var base = name.replace(/\.[^.]+$/, "");
+    var cleaned = base.replace(/[_\-.]+/g, " ").replace(/\b(w-?9|coi|invoice|receipt|waiver|lien|po|purchase.?order|plan|drawing|spec|takeoff|certificate|insurance|form)\b/gi, " ")
+      .replace(/\s+/g, " ").trim();
+    if (cleaned.length < 2) return "";
+    return cleaned.replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+  }
+  function isCmd(text) {
+    var t = text.trim().toUpperCase();
+    if (t === "APPROVE") return "APPROVE";
+    if (t === "SEND") return "SEND";
+    return null;
+  }
+
+  function lastDraft(msgs) {
+    for (var i = msgs.length - 1; i >= 0; i--) if (msgs[i].role === "crew" && msgs[i].draftBody) return msgs[i];
+  }
+  function seatName(s) { for (var i = 0; i < SEATS.length; i++) if (SEATS[i].id === s) return SEATS[i].name; return s; }
+  function draftEmail(job, seat, subject, body) {
+    var draftBody = "Subject: " + subject + "\n\n" + body.trim() + "\n\n— " + seatName(seat) + " / BNZ Builders INC\nCedarhurst, NY\nDRAFT — not sent";
+    var text = seatName(seat) + " drafted this for " + job.name + ". Status: DRAFT. Type APPROVE to lock, or SEND to copy. Nothing is emailed.\n\n" + draftBody;
+    return { text: text, draftBody: draftBody };
+  }
+  function applyFiles(job, files, seat, vendorHint) {
+    var next = { id: job.id, name: job.name, locked: true, kind: job.kind, po: "UNKNOWN",
+      packet: { vendorName: job.packet.vendorName, w9: job.packet.w9, coi: job.packet.coi, po: job.packet.po, waiver: job.packet.waiver },
+      plans: job.plans.slice(), docs: job.docs.slice() };
+    files.forEach(function (f) {
+      var plan = seat === "taylor" || f.kind === "plan";
+      if (plan) { next.plans.push({ id: f.id, name: f.name, addedAt: Date.now() }); return; }
+      next.docs.push({ id: f.id, name: f.name, kind: f.kind, addedAt: Date.now() });
+      var k = packetKey(f.kind); if (k) next.packet[k] = "in";
+    });
+    if (vendorHint && !next.packet.vendorName.trim()) next.packet.vendorName = vendorHint;
+    return next;
+  }
+  function packetLine(job) {
+    var p = job.packet, v = p.vendorName.trim() || "—";
+    function f(k) { return p[k] === "in" ? "in" : "missing"; }
+    return job.name + " · vendor " + v + " · W-9 " + f("w9") + " · COI " + f("coi") + " · PO " + f("po") + " · waiver " + f("waiver");
+  }
+  function missingList(job) {
+    var m = [];
+    if (job.packet.w9 !== "in") m.push("W-9");
+    if (job.packet.coi !== "in") m.push("COI");
+    if (job.packet.po !== "in") m.push("PO");
+    if (job.packet.waiver !== "in") m.push("waiver");
+    return m.length ? m.join(", ") : "none — packet is in";
+  }
+  function brain(job, seat, q, files) {
+    var i, kinds;
+    if (seat === "taylor") {
+      var planNote = job.plans.length ? "Plans on file: " + job.plans.map(function (p) { return p.name; }).join(", ") + "." : "No plan on file yet.";
+      if (files.length) {
+        return { text: "Taylor · Plan logged: " + files.map(function (f) { return f.name; }).join(", ") + ". " + planNote + " Scope, takeoff, labor, and Bid Total stay UNKNOWN. I will not invent SF or prices from a file name." };
+      }
+      var td = draftEmail(job, "taylor", job.name + " — estimate status (UNKNOWN)",
+        "Estimate board for " + job.name + ":\n• Documents: " + (job.plans.length ? "plan logged — NEEDS VERIFICATION" : "UNKNOWN") +
+        "\n• Scope: UNKNOWN\n• Takeoff SF: UNKNOWN\n• Labor / wages: UNKNOWN\n• Materials: UNKNOWN\n• Bid Total: None / UNKNOWN\n\n" + planNote + "\nI will not fill numbers to look complete.");
+      if (/\bbid\b|\bestimate\b|\btakeoff\b|\bhow much\b|\btotal\b/i.test(q)) return { text: td.text, draftStatus: "DRAFT", draftBody: td.draftBody };
+      return { text: "Taylor · " + job.name + ". " + planNote + " Bid Total is None / UNKNOWN. Ask for a cover note and I will draft it with every figure labeled UNKNOWN. Drop a plan on the composer if you have one." };
+    }
+    if (seat === "emma") {
+      if (files.length) {
+        kinds = files.map(function (f) { return kindLabel(f.kind); }).join(", ");
+        var ed = draftEmail(job, "emma", job.name + " — packet update (" + (job.packet.vendorName || "vendor") + ")",
+          "Logged on the packet board for " + job.name + ":\n" + files.map(function (f) { return "• " + f.name + " → " + kindLabel(f.kind) + " = in"; }).join("\n") +
+          "\n\nStill missing: " + missingList(job) + ".\nPO amount stays UNKNOWN. I will not invent a dollar figure.");
+        return { text: "Emma · Packet file: " + files.map(function (f) { return f.name + " as " + kindLabel(f.kind); }).join("; ") + ". " + kinds + " on the left-hand packet.\n\n" + ed.text, draftStatus: "DRAFT", draftBody: ed.draftBody };
+      }
+      if (/\bmissing\b|\bpacket\b|\bstatus\b|\bwhat.?s left\b/i.test(q)) {
+        return { text: "Emma · " + packetLine(job) + "\nStill missing: " + missingList(job) + ". PO dollars: UNKNOWN. Upload a PDF or photo on the composer and I will mark it in." };
+      }
+      var chase = draftEmail(job, "emma", job.name + " — missing documents (" + (job.packet.vendorName || "vendor") + ")",
+        "Hello,\n\nPlease send the remaining items for " + job.name + " so we can keep the packet complete:\n" +
+        (job.packet.w9 !== "in" ? "• W-9 — currently missing\n" : "") +
+        (job.packet.coi !== "in" ? "• COI — currently missing\n" : "") +
+        (job.packet.po !== "in" ? "• PO (amount UNKNOWN until verified) — currently missing\n" : "") +
+        (job.packet.waiver !== "in" ? "• lien waiver — currently missing\n" : "") +
+        "\nReply with PDFs. Do not send this until APPROVE.");
+      return { text: chase.text, draftStatus: "DRAFT", draftBody: chase.draftBody };
+    }
+    if (files.length) {
+      var sd = draftEmail(job, "sara", job.name + " — intake",
+        "Logged on " + job.name + ":\n" + files.map(function (f) { return "• " + f.name + " (" + kindLabel(f.kind) + ")"; }).join("\n") +
+        "\n\nPriority: keep the two locked jobs moving. No bid $ invented.");
+      return { text: "Sara · " + files.map(function (f) { return f.name + " filed as " + kindLabel(f.kind); }).join("; ") + ".\n\n" + sd.text, draftStatus: "DRAFT", draftBody: sd.draftBody };
+    }
+    if (/\bpriority\b|\btoday\b|\bwhat.?s next\b/i.test(q)) {
+      return { text: "Sara · " + job.name + " (locked).\n1. Packet: " + packetLine(job) + "\n2. Estimate: Bid Total UNKNOWN — Taylor will not invent it.\n3. Drafts stay in this thread until APPROVE. SEND copies only.\nPO amount: UNKNOWN." };
+    }
+    var fol = draftEmail(job, "sara", job.name + " — follow-up",
+      "Hello,\n\nFollowing up on " + job.name + ". BNZ Builders INC still has PO UNKNOWN on this job. Please confirm:\n• current drawings / scope\n• vendor packet (W-9, COI, PO, waiver)\n• any deadline we should put on the board\n\nThis is a draft from Sara. It does not go out until you type APPROVE, then SEND to copy.");
+    return { text: fol.text, draftStatus: "DRAFT", draftBody: fol.draftBody };
+  }
+
+  function mergeJobs(saved) {
+    var seed = jobsSeed(), by = {};
+    (saved || []).forEach(function (j) { by[j.id] = j; });
+    return seed.map(function (s) {
+      var e = by[s.id]; if (!e) return s;
+      s.packet = {
+        vendorName: (e.packet && e.packet.vendorName) || "",
+        w9: e.packet && e.packet.w9 === "in" ? "in" : "missing",
+        coi: e.packet && e.packet.coi === "in" ? "in" : "missing",
+        po: e.packet && e.packet.po === "in" ? "in" : "missing",
+        waiver: e.packet && e.packet.waiver === "in" ? "in" : "missing"
+      };
+      s.plans = Array.isArray(e.plans) ? e.plans : [];
+      s.docs = Array.isArray(e.docs) ? e.docs : [];
+      return s;
+    });
+  }
+
+  var state = { version: 2, seat: "sara", jobId: "indian-trail", jobs: jobsSeed(), threads: emptyThreads() };
+  var pending = [];
+  var busy = false;
+
+  try {
+    var raw = localStorage.getItem(KEY);
+    if (raw) {
+      var p = JSON.parse(raw);
+      state.seat = p.seat === "taylor" || p.seat === "emma" ? p.seat : "sara";
+      state.jobId = p.jobId === "545-vienna" ? "545-vienna" : "indian-trail";
+      state.jobs = mergeJobs(p.jobs);
+      state.threads = Object.assign(emptyThreads(), p.threads || {});
+    }
+  } catch (e) {}
+
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function job() { for (var i = 0; i < state.jobs.length; i++) if (state.jobs[i].id === state.jobId) return state.jobs[i]; return state.jobs[0]; }
+  function msgs() { var k = tkey(job().id, state.seat); return state.threads[k] || []; }
+  function toast(msg) {
+    var el = document.getElementById("toast");
+    el.textContent = msg; el.hidden = false;
+    clearTimeout(toast._t); toast._t = setTimeout(function () { el.hidden = true; }, 2400);
+  }
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).then(function () { return true; }).catch(function () { return fallbackCopy(text); });
+    }
+    return Promise.resolve(fallbackCopy(text));
+  }
+  function fallbackCopy(text) {
+    try {
+      var ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.left = "-9999px";
+      document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); return true;
+    } catch (e) { return false; }
+  }
+
+  function renderPacket(root) {
+    var j = job();
+    var html = '<div class="sec">Locked jobs</div>';
+    state.jobs.forEach(function (x) {
+      html += '<button type="button" class="job' + (x.id === state.jobId ? " on" : "") + '" data-job="' + x.id + '"><span>' + esc(x.name) + '</span><span class="lock">locked</span></button>';
+    });
+    html += '<div class="sec">Packet board</div>';
+    html += '<div class="field"><label>Vendor name<input id="vendor-' + root.id + '" value="' + esc(j.packet.vendorName) + '" placeholder="—" /></label></div>';
+    html += '<ul class="flags">';
+    [["w9","W-9"],["coi","COI"],["po","PO"],["waiver","waiver"]].forEach(function (row) {
+      html += "<li><span>" + row[1] + '</span><span class="flag ' + j.packet[row[0]] + '">' + j.packet[row[0]] + "</span></li>";
+    });
+    html += "</ul>";
+    if (j.plans.length) {
+      html += '<div class="sec">Plans</div><ul class="filed">';
+      j.plans.forEach(function (p) { html += "<li>" + esc(p.name) + "</li>"; });
+      html += "</ul>";
+    } else html += '<p class="muted">No plan on file. Seat Taylor and attach a drawing.</p>';
+    if (j.docs.length) {
+      html += '<div class="sec">Filed</div><ul class="filed">';
+      j.docs.forEach(function (d) { html += "<li><span>" + esc(d.name) + '</span><span class="k">' + kindLabel(d.kind) + "</span></li>"; });
+      html += "</ul>";
+    }
+    root.innerHTML = html;
+    root.querySelectorAll("[data-job]").forEach(function (b) {
+      b.onclick = function () { state.jobId = b.getAttribute("data-job"); save(); render(); document.getElementById("drawer").hidden = true; };
+    });
+    var vin = root.querySelector("input");
+    if (vin) vin.oninput = function () { j.packet.vendorName = vin.value; save(); };
+  }
+
+  function render() {
+    var j = job();
+    renderPacket(document.getElementById("aside"));
+    renderPacket(document.getElementById("sheet"));
+    var seats = document.getElementById("seats");
+    seats.innerHTML = SEATS.map(function (s) {
+      return '<button type="button" class="seat ' + s.id + (state.seat === s.id ? " on" : "") + '" data-seat="' + s.id + '"><span class="av ' + s.id + '">' + s.name[0] + '</span><span><strong>' + s.name + "</strong><small>" + s.title + "</small></span></button>";
+    }).join("");
+    seats.querySelectorAll("[data-seat]").forEach(function (b) {
+      b.onclick = function () { state.seat = b.getAttribute("data-seat"); save(); render(); };
+    });
+    var blurb = "";
+    SEATS.forEach(function (s) { if (s.id === state.seat) blurb = s.blurb; });
+    document.getElementById("ctx").innerHTML = "<b>" + esc(j.name) + "</b> · " + esc(j.kind) + ' · PO <span class="unk">UNKNOWN</span> · ' + esc(blurb);
+    var log = document.getElementById("log");
+    log.innerHTML = msgs().map(function (m) {
+      var who = m.role === "user" ? "You" : seatName(m.seat);
+      var cls = m.role === "user" ? "you" : m.seat;
+      var st = m.draftStatus ? '<span class="chip ' + m.draftStatus + '">' + m.draftStatus + "</span>" : "";
+      var copy = m.role === "crew" ? '<button type="button" class="copy" data-copy="' + esc(m.id) + '" aria-label="Copy reply" title="Copy">copy</button>' : "";
+      var atts = "";
+      if (m.attachments && m.attachments.length) {
+        atts = "<div>" + m.attachments.map(function (a) { return '<div class="k">' + esc(a.name) + " · " + kindLabel(a.kind) + "</div>"; }).join("") + "</div>";
+      }
+      return '<div class="row ' + m.role + '"><div class="bubble"><div class="who"><span class="' + cls + '">' + who + "</span><span>" + st + copy + "</span></div>" + esc(m.text) + atts + "</div></div>";
+    }).join("") + (busy ? '<p class="muted">' + seatName(state.seat) + " is drafting…</p>" : "");
+    log.scrollTop = log.scrollHeight;
+    log.querySelectorAll("[data-copy]").forEach(function (b) {
+      b.onclick = function () {
+        var id = b.getAttribute("data-copy");
+        var list = msgs();
+        for (var i = 0; i < list.length; i++) if (list[i].id === id) {
+          copyText(list[i].draftBody || list[i].text).then(function (ok) { toast(ok ? "Copied." : "Copy blocked."); });
+        }
+      };
+    });
+    var filesEl = document.getElementById("files");
+    filesEl.innerHTML = pending.map(function (f) {
+      return '<span class="filechip">' + esc(f.name) + ' <span class="k">' + kindLabel(f.kind) + '</span> <button type="button" data-rm="' + f.id + '" aria-label="Remove">×</button></span>';
+    }).join("");
+    filesEl.querySelectorAll("[data-rm]").forEach(function (b) {
+      b.onclick = function () { pending = pending.filter(function (f) { return f.id !== b.getAttribute("data-rm"); }); render(); };
+    });
+    document.getElementById("ask").disabled = busy || (!document.getElementById("box").value.trim() && !pending.length);
+  }
+
+  async function liveGrok(job, seat, q, files) {
+    var k = "";
+    try { k = localStorage.getItem(XKEY) || ""; } catch (e) {}
+    if (!k) return null;
+    var packet = job.packet;
+    var user = "Seat: " + seat + "\nJob: " + job.name + " (locked) · PO UNKNOWN\nVendor: " + (packet.vendorName || "—") +
+      "\nPacket: W-9 " + packet.w9 + " · COI " + packet.coi + " · PO " + packet.po + " · waiver " + packet.waiver +
+      "\nPlans: " + (job.plans.map(function (p) { return p.name; }).join(", ") || "none") +
+      "\nAttached: " + (files.map(function (f) { return f.name + " (" + kindLabel(f.kind) + ")"; }).join("; ") || "none") +
+      "\nHuman: " + (q || "(file only)");
+    try {
+      var res = await fetch("https://api.x.ai/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + k },
+        body: JSON.stringify({
+          model: "grok-4.5", temperature: 0.3, max_tokens: 700,
+          messages: [
+            { role: "system", content: "You are the BuildWithBNZ Crew desk. Sara COO, Taylor estimator, Emma coordinator. Never invent bid $, SF, wages. UNKNOWN stays UNKNOWN. Drafts stay DRAFT until APPROVE. SEND copies, never emails. Two locked jobs: Indian Trail and 545 Vienna. Taylor treats files as plans. Emma treats PDF/photo as packet docs (W-9, COI, invoice, receipt, PO, waiver). When writing a letter, after a line DRAFT BODY put the copy-ready text." },
+            { role: "user", content: user }
+          ]
+        })
+      });
+      if (!res.ok) return null;
+      var body = await res.json();
+      var text = (((body.choices || [])[0] || {}).message || {}).content || "";
+      if (!text.trim()) return null;
+      var parts = text.split(/^DRAFT BODY\s*$/m);
+      return { text: (parts[0] || text).trim(), draftBody: parts[1] ? parts[1].trim() : undefined };
+    } catch (e) { return null; }
+  }
+
+  async function run() {
+    var box = document.getElementById("box");
+    var text = box.value.trim();
+    if (busy) return;
+    if (!text && !pending.length) return;
+    var cmd = text ? isCmd(text) : null;
+    box.value = "";
+    var files = pending.slice();
+    pending = [];
+    var j = job();
+    var k = tkey(j.id, state.seat);
+    if (!state.threads[k]) state.threads[k] = [];
+
+    if (cmd) {
+      state.threads[k].push({ id: uid("you"), role: "user", seat: state.seat, text: cmd, at: Date.now() });
+      var d = lastDraft(state.threads[k].slice(0, -1));
+      var reply;
+      if (!d) {
+        reply = { id: uid("crew"), role: "crew", seat: state.seat, text: seatName(state.seat) + ": there is no draft on this thread. Ask for a follow-up, RFQ, missing-doc chase, or bid cover and I will put it in DRAFT. Nothing is emailed from this desk.", at: Date.now() };
+      } else if (cmd === "APPROVE") {
+        d.draftStatus = "APPROVED";
+        reply = { id: uid("crew"), role: "crew", seat: state.seat, text: seatName(state.seat) + ": last draft is APPROVED. It still has not been sent. Type SEND to copy it to the clipboard. This desk does not email.", at: Date.now() };
+      } else {
+        d.draftStatus = "SENT-DRAFT";
+        var ok = await copyText(d.draftBody);
+        toast(ok ? "SENT-DRAFT copied. Not emailed." : "Marked SENT-DRAFT. Copy failed.");
+        reply = { id: uid("crew"), role: "crew", seat: state.seat, text: seatName(state.seat) + ": last draft copied. Status is SENT-DRAFT. No email was sent — paste it yourself.", draftStatus: "SENT-DRAFT", draftBody: d.draftBody, at: Date.now() };
+      }
+      state.threads[k].push(reply);
+      save(); render(); return;
+    }
+
+    var vendorHint = "";
+    files.forEach(function (f) { if (!vendorHint) vendorHint = vendorFrom(f.name); });
+    var updated = applyFiles(j, files, state.seat, vendorHint);
+    for (var i = 0; i < state.jobs.length; i++) if (state.jobs[i].id === updated.id) state.jobs[i] = updated;
+    state.threads[k].push({
+      id: uid("you"), role: "user", seat: state.seat,
+      text: text || ("(attached " + files.map(function (f) { return f.name; }).join(", ") + ")"),
+      attachments: files.length ? files : undefined, at: Date.now()
+    });
+    busy = true; save(); render();
+    var out = brain(updated, state.seat, text, files);
+    var live = await liveGrok(updated, state.seat, text, files);
+    if (live && live.text) {
+      out.text = live.text;
+      if (live.draftBody) { out.draftBody = live.draftBody; out.draftStatus = "DRAFT"; }
+    }
+    state.threads[k].push({
+      id: uid("crew"), role: "crew", seat: state.seat, text: out.text,
+      draftStatus: out.draftStatus, draftBody: out.draftBody, at: Date.now()
+    });
+    busy = false; save(); render();
+  }
+
+  document.getElementById("clip").onclick = function () { document.getElementById("fileInput").click(); };
+  document.getElementById("fileInput").onchange = function (e) {
+    var list = e.target.files || [];
+    for (var i = 0; i < list.length; i++) {
+      var f = list[i];
+      var ok = f.type === "application/pdf" || (f.type || "").indexOf("image/") === 0 || /\.(pdf|png|jpe?g|webp|heic)$/i.test(f.name);
+      if (!ok) { toast("PDF or photo only."); continue; }
+      pending.push({ id: uid("file"), name: f.name, mime: f.type || "application/octet-stream", kind: classify(f, state.seat), size: f.size });
+    }
+    e.target.value = ""; render();
+  };
+  document.getElementById("ask").onclick = function () { run(); };
+  document.getElementById("box").addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); run(); }
+  });
+  document.getElementById("box").addEventListener("input", function () {
+    document.getElementById("ask").disabled = busy || (!document.getElementById("box").value.trim() && !pending.length);
+  });
+  document.getElementById("keyBtn").onclick = function () {
+    var p = document.getElementById("keyPanel"); p.hidden = !p.hidden;
+  };
+  document.getElementById("keySave").onclick = function () {
+    var v = document.getElementById("keyInput").value.trim();
+    if (v) localStorage.setItem(XKEY, v); else localStorage.removeItem(XKEY);
+    document.getElementById("keyPanel").hidden = true;
+    toast(v ? "Key stored on this device." : "Key cleared.");
+  };
+  document.getElementById("keyClear").onclick = function () {
+    localStorage.removeItem(XKEY); document.getElementById("keyInput").value = "";
+    toast("Key cleared.");
+  };
+  document.getElementById("packetBtn").onclick = function () { document.getElementById("drawer").hidden = false; };
+  document.getElementById("scrim").onclick = function () { document.getElementById("drawer").hidden = true; };
+
+  render();
+})();
+  </script>
+</body>
+</html>
